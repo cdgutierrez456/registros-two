@@ -1,0 +1,40 @@
+{
+  "name": "civilregisty-v2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@portabletext/react": "^3.2.1",
+    "@reduxjs/toolkit": "^2.7.0",
+    "@sanity/cli": "^3.87.1",
+    "@sanity/client": "^7.0.0",
+    "@sanity/vision": "^3.87.1",
+    "axios": "^1.9.0",
+    "next": "14.2.7",
+    "next-sanity": "^9.10.6",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "sanity": "^3.87.1",
+    "sonner": "^2.0.3",
+    "styled-components": "^6.1.17",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.7",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

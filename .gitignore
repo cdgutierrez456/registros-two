@@ -6,6 +6,11 @@
 # Node artifact files
 node_modules/
 dist/
+.next
+
+# Environment files
+.env.local
+.env
 
 # Compiled Java class files
 *.class

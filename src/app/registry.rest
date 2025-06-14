@@ -1,0 +1,14 @@
+### Listado de bancos PSE
+GET https://pruebas.certificadostradicionylibertad.co/api/v2/payment-process/banks
+
+
+### Obtener detalle de una transacción
+
+GET http://pruebas.certificadostradicionylibertad.co/api/v2/payment-process/transactions/{id-transaccion}
+
+
+### Obtener informacion de un codigo redimible
+GET http://pruebas.certificadostradicionylibertad.co/api/v2/validate/{redeeemcode}
+
+### Realizar una compra
+POST http://pruebas.certificadostradicionylibertad.co/api/v2/payment-process/pay
