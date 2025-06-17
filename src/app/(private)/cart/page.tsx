@@ -12,7 +12,7 @@ export default function Page() {
   );
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center gap-10 py-16 md:px-0 px-[20px]">
+    <div className="flex flex-col md:flex-row items-start justify-center gap-10 py-16 md:px-0 px-[20px]">
       <ConfirmOrder />
       {registryPayment.length > 0 && <PaymentForm />}
     </div>

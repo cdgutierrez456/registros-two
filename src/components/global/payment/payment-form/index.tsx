@@ -8,6 +8,7 @@ import { RootState } from "@/redux/store";
 
 import CreditCardForm from "../../form/creditcard";
 import PSEForm from "../../form/pse";
+import FormRedeemCode from "../../form/code";
 
 export default function PaymentForm() {
   const { paymentMethod } = useSelector(
@@ -22,7 +23,7 @@ export default function PaymentForm() {
         <PaymentMethodSelector />
 
         <div className="mt-8">
-          {paymentMethod === "card" ? <CreditCardForm /> : <PSEForm />}
+          {paymentMethod === "card" ? <CreditCardForm /> : paymentMethod === "pse" ? <PSEForm /> : <FormRedeemCode />}
         </div>
       </div>
     </section>

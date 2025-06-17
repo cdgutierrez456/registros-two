@@ -10,17 +10,17 @@ export default function ContactForm() {
       <div className="flex flex-col gap-4 items-start w-full">
         <label
           htmlFor="name"
-          className="text-base font-bold leading-4 text-zinc-800"
+          className="text-lg font-bold leading-4 text-zinc-800"
         >
           Nombre:
         </label>
-        <div className="flex gap-2.5 items-center px-8 py-5 w-full bg-white rounded-lg max-sm:px-6 max-sm:py-4">
+        <div className="flex gap-2.5 items-center px-8 py-4 w-full bg-white rounded-lg max-sm:px-6 max-sm:py-4">
           <input
             id="name"
             name="name"
             type="text"
             placeholder="Enter your name..."
-            className="w-full text-xs leading-4 text-gray-500 bg-transparent border-[nonepx] max-sm:text-sm"
+            className="w-full text-md py-2 leading-4 text-gray-500 bg-transparent border-[nonepx] max-sm:text-sm"
           />
         </div>
       </div>
@@ -28,17 +28,17 @@ export default function ContactForm() {
       <div className="flex flex-col gap-4 items-start w-full">
         <label
           htmlFor="email"
-          className="text-base font-bold leading-4 text-zinc-800"
+          className="text-lg font-bold leading-4 text-zinc-800"
         >
           Correo
         </label>
-        <div className="flex gap-2.5 items-center px-8 py-5 w-full bg-white rounded-lg max-sm:px-6 max-sm:py-4">
+        <div className="flex gap-2.5 items-center px-8 py-4 w-full bg-white rounded-lg max-sm:px-6 max-sm:py-4">
           <input
             id="email"
             name="email"
             type="email"
             placeholder="Enter your email..."
-            className="w-full text-xs leading-4 text-gray-500 bg-transparent border-[nonepx] max-sm:text-sm"
+            className="w-full text-md py-2 leading-4 text-gray-500 bg-transparent border-[nonepx] max-sm:text-sm"
           />
         </div>
       </div>
@@ -46,16 +46,16 @@ export default function ContactForm() {
       <div className="flex flex-col gap-4 items-start w-full">
         <label
           htmlFor="message"
-          className="text-base font-bold leading-4 text-zinc-800"
+          className="text-lg font-bold leading-4 text-zinc-800"
         >
           Mensaje
         </label>
-        <div className="flex gap-2.5 items-start px-8 py-5 w-full bg-white rounded-lg h-[171px] max-sm:px-6 max-sm:py-4 max-sm:h-[120px]">
+        <div className="flex gap-2.5 items-start px-8 py-4 w-full bg-white rounded-lg h-[171px] max-sm:px-6 max-sm:py-4 max-sm:h-[120px]">
           <textarea
             id="message"
             name="message"
             placeholder="Writing your message here..."
-            className="text-xs leading-4 text-gray-500 bg-transparent resize-none border-[nonepx] size-full max-sm:text-sm"
+            className="text-md py-2 leading-4 text-gray-500 bg-transparent resize-none border-[nonepx] size-full max-sm:text-sm"
           />
         </div>
       </div>

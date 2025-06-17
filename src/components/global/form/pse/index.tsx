@@ -6,9 +6,12 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setBanksPse } from "@/redux/slices/registryPaymentSlice";
 import { RootState } from "@/redux/store";
+import PaymentButton from "../../payment/payment-form/payment-button";
 
 export default function PSEForm() {
-  const { banksPse } = useSelector((state: RootState) => state.PaymentReducer);
+  const { banksPse, total } = useSelector(
+    (state: RootState) => state.PaymentReducer
+  );
 
   const dispath = useDispatch();
 
@@ -26,7 +29,7 @@ export default function PSEForm() {
     banksPse();
   }, [dispath]);
 
-  const listBanks = banksPse.map(({ bankCode, bankName }: any, index) => {
+  const listBanks = banksPse?.map(({ bankCode, bankName }: any, index) => {
     return {
       id: `id-${index}`,
       label: bankName,
@@ -139,6 +142,10 @@ export default function PSEForm() {
           },
         ]}
       />
+
+      <div className="mt-9">
+        <PaymentButton total={total} />
+      </div>
     </form>
   );
 }
