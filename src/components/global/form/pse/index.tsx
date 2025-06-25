@@ -19,7 +19,7 @@ export default function PSEForm() {
     const banksPse = async () => {
       try {
         const response = await fetcher(`/payment-process/banks`);
-        dispath(setBanksPse(response.data.banks));
+        dispath(setBanksPse(response.data));
       } catch (error) {
         toast.error("Error al cargar bancos");
         throw error;
