@@ -35,7 +35,7 @@ export default function Selector() {
             priority
             loading="eager"
             quality={100}
-            className="mx-auto absolute -top-12 z-10"
+            className="mx-auto absolute -top-12 md:z-10 z-0"
           />
 
           <div className="bg-white p-6 rounded-lg mt-16">

@@ -1,15 +1,17 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import FormInput from "@/components/ui/FormInput";
 import { useEffect } from "react";
-import { fetcher } from "@/utils/httpClient";
+import { fetcher, publicHttpClient } from "@/utils/httpClient";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setBanksPse } from "@/redux/slices/registryPaymentSlice";
 import { RootState } from "@/redux/store";
 import PaymentButton from "../../payment/payment-form/payment-button";
+import buildPaymentRequest from "../combined-object";
+import { registryPayment } from "@/types/payment";
 
 export default function PSEForm() {
-  const { banksPse, total } = useSelector(
+  const { banksPse, total, registryPayment } = useSelector(
     (state: RootState) => state.PaymentReducer
   );
 
@@ -18,8 +20,8 @@ export default function PSEForm() {
   useEffect(() => {
     const banksPse = async () => {
       try {
-        const response = await fetcher(`/payment-process/banks`);
-        dispath(setBanksPse(response.data.banks));
+        const { data } = await fetcher(`/payment-process/banks`);
+        dispath(setBanksPse(data));
       } catch (error) {
         toast.error("Error al cargar bancos");
         throw error;
@@ -37,8 +39,57 @@ export default function PSEForm() {
     };
   });
 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const fields = Object.fromEntries(
+        new window.FormData(event.target as any)
+      );
+
+      const { civilRegisters } = buildPaymentRequest(
+        registryPayment as registryPayment[]
+      );
+
+      const combinedObject = {
+        request: {
+          type_product: 1,
+          payment_method: "pse",
+          document_type: fields.document_type || null,
+          document_number: fields.document_number,
+          email: fields.email === fields.confirm_email ? fields.email : null,
+          phone: fields.phone || null,
+          bank: fields.bank || null,
+          person_type: fields.type_person || null,
+          fullname: fields.name || null,
+          total_amount: total,
+          redirect_url: "http://localhost:3333/status",
+          civil_registers: civilRegisters,
+          biller_address: null, // This field doesn't exist
+          redeem_codes: {
+            value_redeem_code: fields.reedem_code || null,
+            amount_pay: null,
+          },
+        },
+      };
+
+      // console.log(combinedObject);
+
+      const response = await publicHttpClient.post(
+        "/payment-process/pay",
+        combinedObject
+      );
+
+      console.log(response);
+
+      // return response;
+    } catch (error) {
+      toast.error("Error al enviar el formulario");
+      throw error;
+    }
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <FormInput
         column={true}
         data={[
