@@ -74,11 +74,6 @@ export default function CreditCardForm() {
             label: "Tipo de documento",
             options: [
               {
-                value: "",
-                label: "Seleccione el tipo de documento",
-                id: "",
-              },
-              {
                 value: "CedulaDeCiudadania",
                 label: "Cedula de Ciudadanía",
                 id: "CedulaDeCiudadania",
@@ -184,7 +179,7 @@ export default function CreditCardForm() {
       />
 
       <div className="mt-9">
-        <PaymentButton total={total} />
+        <PaymentButton total={total} disabled={false} />
       </div>
     </form>
   );

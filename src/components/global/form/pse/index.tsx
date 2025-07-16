@@ -1,4 +1,4 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import FormInput from "@/components/ui/FormInput";
 import { useEffect } from "react";
 import { fetcher, publicHttpClient } from "@/utils/httpClient";
@@ -9,11 +9,15 @@ import { RootState } from "@/redux/store";
 import PaymentButton from "../../payment/payment-form/payment-button";
 import buildPaymentRequest from "../combined-object";
 import { registryPayment } from "@/types/payment";
+import { FormSchema } from "@/schemas/pse-schema";
+import z from "zod";
 
 export default function PSEForm() {
   const { banksPse, total, registryPayment } = useSelector(
     (state: RootState) => state.PaymentReducer
   );
+
+  const [errors, setErrors] = useState({});
 
   const dispath = useDispatch();
 
@@ -41,10 +45,13 @@ export default function PSEForm() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     try {
-      const fields = Object.fromEntries(
-        new window.FormData(event.target as any)
-      );
+      const formData = new FormData(event.target as HTMLFormElement);
+      const fields = Object.fromEntries(formData.entries());
+
+      const parsed = FormSchema.parse(fields);
+      setErrors({});
 
       const { civilRegisters } = buildPaymentRequest(
         registryPayment as registryPayment[]
@@ -54,25 +61,23 @@ export default function PSEForm() {
         request: {
           type_product: 1,
           payment_method: "pse",
-          document_type: fields.document_type || null,
-          document_number: fields.document_number,
-          email: fields.email === fields.confirm_email ? fields.email : null,
-          phone: fields.phone || null,
-          bank: fields.bank || null,
-          person_type: fields.type_person || null,
-          fullname: fields.name || null,
+          document_type: parsed.document_type || null,
+          document_number: parsed.document_number,
+          email: parsed.email === parsed.confirm_email ? parsed.email : null,
+          phone: parsed.phone || null,
+          bank: parsed.bank || null,
+          person_type: parsed.type_person || null,
+          fullname: parsed.name || null,
           total_amount: total,
           redirect_url: "http://localhost:3333/status",
           civil_registers: civilRegisters,
-          biller_address: null, // This field doesn't exist
+          address: null,
           redeem_codes: {
             value_redeem_code: fields.reedem_code || null,
             amount_pay: null,
           },
         },
       };
-
-      // console.log(combinedObject);
 
       const response = await publicHttpClient.post(
         "/payment-process/pay",
@@ -83,8 +88,18 @@ export default function PSEForm() {
 
       // return response;
     } catch (error) {
-      toast.error("Error al enviar el formulario");
-      throw error;
+      if (error instanceof z.ZodError) {
+        const fieldErrors: Record<string, string> = {};
+
+        error.errors.forEach((err) => {
+          if (err.path.length > 0) {
+            fieldErrors[err.path[0] as string] = err.message;
+          }
+        });
+        setErrors(fieldErrors);
+      } else {
+        toast.error("Error al enviar el formulario");
+      }
     }
   };
 
@@ -92,6 +107,7 @@ export default function PSEForm() {
     <form onSubmit={handleSubmit}>
       <FormInput
         column={true}
+        errors={errors}
         data={[
           {
             id: "type_person",
@@ -195,7 +211,7 @@ export default function PSEForm() {
       />
 
       <div className="mt-9">
-        <PaymentButton total={total} />
+        <PaymentButton total={total} disabled={false} />
       </div>
     </form>
   );
