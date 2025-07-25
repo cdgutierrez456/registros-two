@@ -71,14 +71,14 @@ export default function PSEForm() {
           total_amount: total,
           redirect_url: "http://localhost:3333/status",
           civil_registers: civilRegisters,
-          address: null,
+          address: parsed.address,
           redeem_codes: {
             value_redeem_code: fields.reedem_code || null,
             amount_pay: null,
           },
         },
       };
-
+      debugger
       const response = await publicHttpClient.post(
         "/payment-process/pay",
         combinedObject
@@ -205,6 +205,14 @@ export default function PSEForm() {
             placeholder: "Celular",
             type: "text",
             label: "Celular",
+            required: true,
+          },
+          {
+            id: "address",
+            name: "address",
+            placeholder: "Dirección",
+            type: "text",
+            label: "Dirección",
             required: true,
           },
         ]}

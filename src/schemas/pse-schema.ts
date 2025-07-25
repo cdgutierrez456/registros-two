@@ -25,6 +25,12 @@ export const FormSchema = z
       .nonempty("Debe ingresar un nombre")
       .regex(/^[a-zA-Z ]+$/, "El nombre solo debe contener letras"),
 
+    address: z
+      .string()
+      .min(5, "La dirección debe tener al menos 5 caracteres")
+      .max(100, "La dirección es demasiado larga")
+      .nonempty("La dirección es requerida"),
+
     bank: z
       .string()
       .min(1, "El banco es requerido")
