@@ -21,6 +21,8 @@ export default function PSEForm() {
 
   const dispath = useDispatch();
 
+  const REDIRECT_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
+
   useEffect(() => {
     const banksPse = async () => {
       try {
@@ -69,7 +71,7 @@ export default function PSEForm() {
           person_type: parsed.type_person || null,
           fullname: parsed.name || null,
           total_amount: total,
-          redirect_url: "http://localhost:3333/status",
+          redirect_url: `${REDIRECT_URL}/status?status=`,
           civil_registers: civilRegisters,
           address: parsed.address,
           redeem_codes: {
@@ -78,15 +80,18 @@ export default function PSEForm() {
           },
         },
       };
-      debugger
+      debugger;
       const response = await publicHttpClient.post(
         "/payment-process/pay",
         combinedObject
       );
 
-      console.log(response);
+      if (response.status === 200) {
+        const { data } = response;
+        const { data: dataResponse } = data;
 
-      // return response;
+        window.location.href = dataResponse.pseURL;
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Record<string, string> = {};

@@ -15,16 +15,24 @@ import { RegistryPayment } from "@/redux/slices/registryPaymentSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
+interface FormButtonProps {
+  formRef: React.RefObject<HTMLFormElement>;
+  registryPayment: RegistryPayment[];
+  selector: number;
+  onValidationSuccess?: (data: any) => void;
+  onValidationError?: (errors: Record<string, string>) => void;
+}
+
 export default function FormButton({
   formRef,
   registryPayment,
   selector,
-}: {
-  formRef: React.RefObject<HTMLFormElement>;
-  registryPayment: RegistryPayment[];
-  selector: number;
-}) {
+  onValidationSuccess,
+  onValidationError,
+}: FormButtonProps) {
   const { isEditing } = useSelector((state: RootState) => state.PaymentReducer);
+
+  console.log("selector: ", selector);
 
   const dispatch = useDispatch();
 
@@ -47,6 +55,13 @@ export default function FormButton({
   const handleAdd = () => {
     try {
       if (formRef.current) {
+        // If we have a custom validation handler, trigger form submission
+        if (onValidationSuccess && onValidationError) {
+          formRef.current.requestSubmit();
+          return;
+        }
+
+        // Fallback to the old validation method
         const fields = getValidatedFormFields(formRef.current);
 
         if (!fields) return;
@@ -58,16 +73,6 @@ export default function FormButton({
 
         dispatch(setRegistryPayment(registryPaymentData));
         dispatch(setSelector(4));
-
-        // Object.keys(fields).forEach((key) => {
-        //   const input = formRef.current?.elements.namedItem(
-        //     key
-        //   ) as HTMLInputElement | null;
-
-        //   if (input && "value" in input) {
-        //     input.value = "";
-        //   }
-        // });
 
         toast.success("Registro agregado exitosamente");
 
@@ -81,6 +86,13 @@ export default function FormButton({
 
   const handlePay = () => {
     if (formRef.current && registryPayment.length === 0) {
+      // If we have a custom validation handler, trigger form submission
+      if (onValidationSuccess && onValidationError) {
+        formRef.current.requestSubmit();
+        return;
+      }
+
+      // Fallback to the old validation method
       const fields = getValidatedFormFields(formRef.current);
 
       if (!fields) return;
@@ -98,6 +110,13 @@ export default function FormButton({
   const handleEditRecord = () => {
     try {
       if (isEditing && formRef.current) {
+        // If we have a custom validation handler, trigger form submission
+        if (onValidationSuccess && onValidationError) {
+          formRef.current.requestSubmit();
+          return;
+        }
+
+        // Fallback to the old validation method
         const fields = getValidatedFormFields(formRef.current);
 
         if (!fields) return;
@@ -134,6 +153,7 @@ export default function FormButton({
     <div className="flex justify-center items-center gap-5">
       {isEditing && Object.keys(isEditing).length > 0 ? (
         <button
+          type="button"
           className="rounded-full border border-lightBlue bg-lightBlue pl-4 pr-3 py-2 flex items-center justify-center gap-2 text-center font-normal text-white hover:bg-blueCher"
           onClick={handleEditRecord}
         >
@@ -141,6 +161,7 @@ export default function FormButton({
         </button>
       ) : (
         <button
+          type="button"
           className="rounded-full border border-lightBlue bg-lightBlue pl-4 pr-3 py-2 flex items-center justify-center gap-2 text-center font-normal text-white hover:bg-blueCher"
           onClick={handleAdd}
         >
@@ -154,6 +175,7 @@ export default function FormButton({
       )}
 
       <button
+        type="button"
         className="rounded-full border border-lightBlue text-blueCher px-6 py-2 hover:border-blueCher"
         onClick={handlePay}
       >

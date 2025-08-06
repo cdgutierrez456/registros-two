@@ -12,6 +12,8 @@ export default function Form() {
     (state: RootState) => state.PaymentReducer
   );
 
+  console.log(registryPayment);
+
   return (
     <div
       className="flex flex-col gap-16 py-16 mx-auto w-full max-w-[1240px] px-[20px] md:px-0"

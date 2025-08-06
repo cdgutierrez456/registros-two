@@ -4,6 +4,9 @@ import FormSelector from "@/components/ui/FormSelector";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import FormButton from "../form-button";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { demiseFormSchema } from "@/schemas/demise-schema";
+import { toast } from "sonner";
 
 export default function Demise() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -12,17 +15,42 @@ export default function Demise() {
     (state: RootState) => state.PaymentReducer
   );
 
-  const [formDemise, setFormDemise] = useState<string>();
+  const [formDemise, setFormDemise] = useState<string>("cedula");
+  const { errors, validateForm, clearErrors } =
+    useFormValidation(demiseFormSchema);
 
   const handleOptionMarriage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setFormDemise(value);
+    clearErrors();
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (formRef.current) {
+      const formData = new FormData(formRef.current);
+      // Add the type_search field to the form data
+      formData.append("type_search", formDemise);
+
+      const validatedData = validateForm(formData);
+
+      if (validatedData) {
+        toast.success("Datos del formulario válidos");
+      } else {
+        toast.error("Por favor, corrija los errores en el formulario");
+      }
+    }
   };
 
   console.log(registryPayment);
 
   return (
-    <form className="mt-5 flex flex-col gap-7" ref={formRef} onSubmit={(e) => e.preventDefault()}>
+    <form
+      className="mt-5 flex flex-col gap-7"
+      ref={formRef}
+      onSubmit={handleSubmit}
+    >
       <FormSelector
         header="2. Indica los datos de la persona inscrita en el Registro Civil"
         data={[
@@ -56,6 +84,7 @@ export default function Demise() {
 
       <FormInput
         header="3. Indique los siguientes datos de las personas inscritas en el registro"
+        errors={errors}
         data={[
           {
             id: "name_first_registrant",
