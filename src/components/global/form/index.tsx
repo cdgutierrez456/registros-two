@@ -29,7 +29,7 @@ export default function Form() {
         </span>
       </div>
 
-      <div className="flex items-start justify-center gap-10">
+      <div className="flex md:flex-row flex-col gap-16 items-start justify-center md:gap-10">
         <div className="flex flex-col gap-8">
           <Selector />
           <FormSelector />
