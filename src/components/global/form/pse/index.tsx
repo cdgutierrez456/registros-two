@@ -1,25 +1,33 @@
-import React from "react";
+import React, { FormEvent, useState } from "react";
 import FormInput from "@/components/ui/FormInput";
 import { useEffect } from "react";
-import { fetcher } from "@/utils/httpClient";
+import { fetcher, publicHttpClient } from "@/utils/httpClient";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setBanksPse } from "@/redux/slices/registryPaymentSlice";
 import { RootState } from "@/redux/store";
 import PaymentButton from "../../payment/payment-form/payment-button";
+import buildPaymentRequest from "../combined-object";
+import { registryPayment } from "@/types/payment";
+import { FormSchema } from "@/schemas/pse-schema";
+import z from "zod";
 
 export default function PSEForm() {
-  const { banksPse, total } = useSelector(
+  const { banksPse, total, registryPayment } = useSelector(
     (state: RootState) => state.PaymentReducer
   );
 
+  const [errors, setErrors] = useState({});
+
   const dispath = useDispatch();
+
+  const REDIRECT_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 
   useEffect(() => {
     const banksPse = async () => {
       try {
-        const response = await fetcher(`/payment-process/banks`);
-        dispath(setBanksPse(response.data.banks));
+        const { data } = await fetcher(`/payment-process/banks`);
+        dispath(setBanksPse(data));
       } catch (error) {
         toast.error("Error al cargar bancos");
         throw error;
@@ -37,10 +45,74 @@ export default function PSEForm() {
     };
   });
 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const formData = new FormData(event.target as HTMLFormElement);
+      const fields = Object.fromEntries(formData.entries());
+
+      const parsed = FormSchema.parse(fields);
+      setErrors({});
+
+      const { civilRegisters } = buildPaymentRequest(
+        registryPayment as registryPayment[]
+      );
+
+      const combinedObject = {
+        request: {
+          type_product: 1,
+          payment_method: "pse",
+          document_type: parsed.document_type || null,
+          document_number: parsed.document_number,
+          email: parsed.email === parsed.confirm_email ? parsed.email : null,
+          phone: parsed.phone || null,
+          bank: parsed.bank || null,
+          person_type: parsed.type_person || null,
+          fullname: parsed.name || null,
+          total_amount: total,
+          redirect_url: `${REDIRECT_URL}/status?status=`,
+          civil_registers: civilRegisters,
+          address: parsed.address,
+          redeem_codes: {
+            value_redeem_code: fields.reedem_code || null,
+            amount_pay: null,
+          },
+        },
+      };
+      debugger;
+      const response = await publicHttpClient.post(
+        "/payment-process/pay",
+        combinedObject
+      );
+
+      if (response.status === 200) {
+        const { data } = response;
+        const { data: dataResponse } = data;
+
+        window.location.href = dataResponse.pseURL;
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors: Record<string, string> = {};
+
+        error.errors.forEach((err) => {
+          if (err.path.length > 0) {
+            fieldErrors[err.path[0] as string] = err.message;
+          }
+        });
+        setErrors(fieldErrors);
+      } else {
+        toast.error("Error al enviar el formulario");
+      }
+    }
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <FormInput
         column={true}
+        errors={errors}
         data={[
           {
             id: "type_person",
@@ -140,11 +212,19 @@ export default function PSEForm() {
             label: "Celular",
             required: true,
           },
+          {
+            id: "address",
+            name: "address",
+            placeholder: "Dirección",
+            type: "text",
+            label: "Dirección",
+            required: true,
+          },
         ]}
       />
 
       <div className="mt-9">
-        <PaymentButton total={total} />
+        <PaymentButton total={total} disabled={false} />
       </div>
     </form>
   );

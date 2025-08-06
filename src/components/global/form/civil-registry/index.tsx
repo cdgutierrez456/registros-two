@@ -5,6 +5,9 @@ import { useSelector } from "react-redux";
 
 import { RootState } from "@/redux/store";
 import FormButton from "../form-button";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { civilRegistryFormSchema } from "@/schemas/civil-registry-schema";
+import { toast } from "sonner";
 
 export default function CivilRegistryForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -13,15 +16,31 @@ export default function CivilRegistryForm() {
     (state: RootState) => state.PaymentReducer
   );
 
-  console.log(registryPayment);
+  const { errors, validateForm } = useFormValidation(civilRegistryFormSchema);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (formRef.current) {
+      const formData = new FormData(formRef.current);
+      const validatedData = validateForm(formData);
+
+      if (validatedData) {
+        toast.success("Datos del formulario válidos");
+      } else {
+        toast.error("Por favor, corrija los errores en el formulario");
+      }
+    }
+  };
 
   return (
     <form
       className="mt-5 flex flex-col gap-12"
       ref={formRef}
-      onSubmit={(e) => e.preventDefault()}
+      onSubmit={handleSubmit}
     >
       <FormInput
+        errors={errors}
         data={[
           {
             id: "name",
