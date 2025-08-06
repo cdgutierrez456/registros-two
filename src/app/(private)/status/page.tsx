@@ -4,7 +4,7 @@ import PaymentStatus from "@/components/global/payment/payment-status";
 import React from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function page() {
+export default function Page() {
   const searchParams = useSearchParams();
 
   const status = searchParams.get("status");

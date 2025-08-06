@@ -5,7 +5,7 @@ interface ValidationErrors {
   [key: string]: string;
 }
 
-export function useFormValidation<T extends z.ZodTypeAny>(schema: T) {
+export function useFormValidation<T extends z.ZodTypeAny>(schema: T | any) {
   const [errors, setErrors] = useState<ValidationErrors>({});
 
   const validateForm = (formData: FormData): z.infer<T> | null => {
