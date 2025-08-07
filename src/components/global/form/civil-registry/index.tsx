@@ -1,13 +1,18 @@
 import FormInput from "@/components/ui/FormInput";
 import React, { useRef } from "react";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "@/redux/store";
 import FormButton from "../form-button";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { civilRegistryFormSchema } from "@/schemas/civil-registry-schema";
 import { toast } from "sonner";
+import {
+  setRegistryPayment,
+  RegistryPayment,
+  setSelector,
+} from "@/redux/slices/registryPaymentSlice";
 
 export default function CivilRegistryForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -18,6 +23,33 @@ export default function CivilRegistryForm() {
 
   const { errors, validateForm } = useFormValidation(civilRegistryFormSchema);
 
+  const dispatch = useDispatch();
+
+  const handleValidationSuccess = (data: any) => {
+    try {
+      const registryPaymentData: RegistryPayment = {
+        registro_civil: selector.toString(),
+        ...data,
+      };
+
+      // Add to Redux store
+      dispatch(setRegistryPayment(registryPaymentData));
+      dispatch(setSelector(4));
+
+      toast.success("Registro agregado exitosamente");
+
+      return registryPaymentData;
+    } catch (error) {
+      toast.error("Error al enviar los datos del formulario");
+      throw error;
+    }
+  };
+
+  const handleValidationError = (errors: Record<string, string>) => {
+    toast.error("Por favor, corrija los errores en el formulario");
+    return null;
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -26,9 +58,9 @@ export default function CivilRegistryForm() {
       const validatedData = validateForm(formData);
 
       if (validatedData) {
-        toast.success("Datos del formulario válidos");
+        handleValidationSuccess(validatedData);
       } else {
-        toast.error("Por favor, corrija los errores en el formulario");
+        handleValidationError(errors);
       }
     }
   };
@@ -54,9 +86,10 @@ export default function CivilRegistryForm() {
             id: "second_name",
             name: "second_name",
             placeholder: "Segundo nombre",
+            note: "Si no cuenta con segundo nombre, indique el texto NO APLICA",
             type: "text",
-            required: false,
-            label: "Segundo nombre (opcional)",
+            required: true,
+            label: "Segundo nombre",
           },
           {
             id: "first_lastname",
@@ -98,6 +131,8 @@ export default function CivilRegistryForm() {
         formRef={formRef}
         registryPayment={registryPayment}
         selector={selector}
+        onValidationSuccess={handleValidationSuccess}
+        onValidationError={handleValidationError}
       />
     </form>
   );

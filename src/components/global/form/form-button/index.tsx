@@ -23,6 +23,9 @@ interface FormButtonProps {
   onValidationError?: (errors: Record<string, string>) => void;
 }
 
+
+
+
 export default function FormButton({
   formRef,
   registryPayment,
@@ -31,8 +34,6 @@ export default function FormButton({
   onValidationError,
 }: FormButtonProps) {
   const { isEditing } = useSelector((state: RootState) => state.PaymentReducer);
-
-  console.log("selector: ", selector);
 
   const dispatch = useDispatch();
 

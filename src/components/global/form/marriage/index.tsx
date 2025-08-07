@@ -7,10 +7,15 @@ import FormButton from "../form-button";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
-import { setDetailSelector } from "@/redux/slices/registryPaymentSlice";
+import {
+  setDetailSelector,
+  setRegistryPayment,
+  setSelector,
+} from "@/redux/slices/registryPaymentSlice";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { marriageFormSchema } from "@/schemas/marriage-schema";
 import { toast } from "sonner";
+import { RegistryPayment } from "@/redux/slices/registryPaymentSlice";
 
 export default function MarriageForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -30,18 +35,43 @@ export default function MarriageForm() {
     clearErrors();
   };
 
+  const handleValidationSuccess = (data: any) => {
+    try {
+      // Create the registry payment data with the validated form data
+      const registryPaymentData: RegistryPayment = {
+        registro_civil: selector.toString(),
+        ...data,
+      };
+
+      // Add to Redux store
+      dispatch(setRegistryPayment(registryPaymentData));
+      dispatch(setSelector(4));
+
+      toast.success("Registro agregado exitosamente");
+
+      return registryPaymentData;
+    } catch (error) {
+      toast.error("Error al enviar los datos del formulario");
+      throw error;
+    }
+  };
+
+  const handleValidationError = (errors: Record<string, string>) => {
+    toast.error("Por favor, corrija los errores en el formulario");
+    return null;
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (formRef.current) {
       const formData = new FormData(formRef.current);
-
       const validatedData = validateForm(formData);
 
       if (validatedData) {
-        toast.success("Datos del formulario válidos");
+        handleValidationSuccess(validatedData);
       } else {
-        toast.error("Por favor, corrija los errores en el formulario");
+        handleValidationError(errors);
       }
     }
   };
@@ -81,6 +111,8 @@ export default function MarriageForm() {
         formRef={formRef}
         registryPayment={registryPayment}
         selector={selector}
+        onValidationSuccess={handleValidationSuccess}
+        onValidationError={handleValidationError}
       />
     </form>
   );
