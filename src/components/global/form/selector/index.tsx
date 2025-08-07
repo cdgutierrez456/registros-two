@@ -17,7 +17,6 @@ export default function Selector() {
     dispatch(setSelector(index));
   };
 
-  console.log(selector);
 
   return (
     <div className="grid md:grid-cols-3 grid-cols-1 md:gap-5 gap-10 m-auto">
