@@ -36,8 +36,6 @@ export default function PaymentStatus({ status }: { status: string }) {
         // );
 
         setPaymentStatus(data);
-
-        toast.success("La orden de compra se ha enviado con éxito al correo");
       } catch (error) {
         toast.error("Error al obtener el estado del pago");
         throw error;
