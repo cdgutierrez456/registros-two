@@ -1,0 +1,22 @@
+export type registryPayment = {
+  type_record?: string;
+  first_name?: string | null;
+  second_name?: string | null;
+  first_surname?: string | null;
+  second_surname?: string | null;
+  document?: string | null;
+  serial_registry?: string | null;
+  type_marriage?: string | null;
+  document_person_one?: string | null;
+  document_person_two?: string | null;
+  name_person_one?: string | null;
+  name_person_two?: string | null;
+  surname_person_one?: string | null;
+  surname_person_two?: string | null;
+  serial_code_registry?: string | null;
+  type_search?: string | null;
+  name_first_registrant?: string | null;
+  name_second_registrant?: string | null;
+  surname_first_registrant?: string | null;
+  surname_second_registrant?: string | null;
+};

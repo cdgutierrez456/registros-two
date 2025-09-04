@@ -23,7 +23,13 @@ export default function PaymentForm() {
         <PaymentMethodSelector />
 
         <div className="mt-8">
-          {paymentMethod === "card" ? <CreditCardForm /> : paymentMethod === "pse" ? <PSEForm /> : <FormRedeemCode />}
+          {paymentMethod === "card" ? (
+            <CreditCardForm />
+          ) : paymentMethod === "pse" ? (
+            <PSEForm />
+          ) : (
+            <FormRedeemCode />
+          )}
         </div>
       </div>
     </section>

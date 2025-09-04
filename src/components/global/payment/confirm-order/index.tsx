@@ -19,7 +19,7 @@ export default function ConfirmOrder() {
   });
 
   return (
-    <article className="flex flex-col justify-center items-center rounded-xl max-w-[440px] w-full sticky top-10">
+    <article className="flex flex-col justify-center items-center rounded-xl max-w-[440px] w-full md:sticky top-10">
       <div className="px-6">
         <h2 className="text-2xl font-semibold leading-tight text-center text-sky-950">
           Confirmar Orden y Pagar

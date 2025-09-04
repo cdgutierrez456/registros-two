@@ -63,7 +63,7 @@ function FormRedeemCode() {
       />
 
       <div className="mt-9">
-        <PaymentButton total={total} />
+        <PaymentButton total={total} disabled={false} />
       </div>
     </form>
   );

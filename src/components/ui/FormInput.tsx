@@ -5,6 +5,7 @@ import Select from "./Select";
 interface FormInputProps {
   header?: string;
   column?: boolean;
+  errors?: Record<string, string>;
   data: {
     icon?: React.ReactElement;
     iconPosition?: "left" | "right";
@@ -34,7 +35,7 @@ interface FormInputProps {
   }[];
 }
 
-function FormInput({ header, data, column }: FormInputProps) {
+function FormInput({ header, data, column, errors }: FormInputProps) {
   return (
     <div className="flex flex-col gap-8">
       {header && (
@@ -72,6 +73,11 @@ function FormInput({ header, data, column }: FormInputProps) {
                   required={required}
                   id={id}
                 />
+                {errors?.[name as string] && (
+                  <span className="text-red-500 text-sm mt-1 block">
+                    {errors[name as string]}
+                  </span>
+                )}
               </div>
             ) : (
               <div key={id}>
@@ -84,6 +90,12 @@ function FormInput({ header, data, column }: FormInputProps) {
                   required={required}
                   label={label}
                 />
+
+                {errors?.[name as string] && (
+                  <span className="text-red-500 text-sm mt-1 block">
+                    {errors[name as string]}
+                  </span>
+                )}
 
                 {note !== undefined && note.length > 0 && (
                   <span className="text-red-500 text-sm font-normal">

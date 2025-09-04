@@ -3,7 +3,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import FormInput from "@/components/ui/FormInput";
 
-export default function MarriageFields() {
+interface MarriageFieldsProps {
+  errors?: Record<string, string>;
+}
+
+export default function MarriageFields({ errors }: MarriageFieldsProps) {
   const { detailSelector } = useSelector(
     (state: RootState) => state.PaymentReducer
   );
@@ -13,6 +17,7 @@ export default function MarriageFields() {
       return (
         <FormInput
           header="3. Indique los siguientes datos de las personas inscritas en el registro"
+          errors={errors}
           data={[
             {
               id: "first_name_1",
@@ -65,6 +70,7 @@ export default function MarriageFields() {
       return (
         <FormInput
           header="3. Indique los siguientes datos de las personas inscritas en el registro"
+          errors={errors}
           data={[
             {
               id: "document_number_1",
