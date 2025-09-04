@@ -2,15 +2,25 @@
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 
-import { FaRegCheckCircle, FaRegTimesCircle } from "react-icons/fa";
-
 import Divider from "./divider";
 import PaymentDetails from "./payment-details";
+
+import { FaRegCheckCircle, FaRegTimesCircle } from "react-icons/fa";
 import { toast } from "sonner";
 import { publicHttpClient } from "@/utils/httpClient";
 
 export default function PaymentStatus({ status }: { status: string }) {
   const [paymentStatus, setPaymentStatus] = useState<any>(null);
+
+  const statusPayment = {
+    8: "PROCESADO",
+    9: "RECHAZADO",
+    10: "PENDIENTE",
+    11: "FINALIZADO",
+    12: "FALLIDO",
+    13: "SUPRIMIDO",
+    14: "APROBADO",
+  };
 
   useEffect(() => {
     const fetchPaymentStatus = async () => {
@@ -79,7 +89,9 @@ export default function PaymentStatus({ status }: { status: string }) {
       <section className="flex gap-10 justify-center w-full max-w-[1321px] max-md:gap-8 max-sm:gap-5">
         <div className="flex relative flex-col gap-12 items-center max-sm:gap-8">
           <div className="flex justify-center items-center">
-            {paymentStatus?.ok === true ? (
+            {statusPayment[
+              request?.id_pay_status as keyof typeof statusPayment
+            ] === "APROBADO" ? (
               <FaRegCheckCircle size={50} color="green" />
             ) : (
               <FaRegTimesCircle size={50} color="red" />
@@ -88,10 +100,18 @@ export default function PaymentStatus({ status }: { status: string }) {
 
           <div className="flex relative flex-col gap-4 items-center">
             <h1 className="text-4xl font-semibold text-center leading-[54px] text-neutral-900 max-md:text-3xl max-sm:text-3xl">
-              {paymentStatus?.ok === true ? "Pago Exitoso!" : "Pago Fallido!"}
+              {statusPayment[
+                request?.id_pay_status as keyof typeof statusPayment
+              ] === "APROBADO"
+                ? "Pago Exitoso!"
+                : statusPayment[
+                    request?.id_pay_status as keyof typeof statusPayment
+                  ]}
             </h1>
             <p className="text-base leading-6 text-center max-w-[600px] text-neutral-500 max-sm:text-sm">
-              {paymentStatus?.ok === true
+              {statusPayment[
+                request?.id_pay_status as keyof typeof statusPayment
+              ] === "APROBADO"
                 ? `La Orden de compra se ha enviado con éxito al correo ${email}`
                 : "No se pudo enviar la orden de compra al correo"}
             </p>
@@ -122,7 +142,7 @@ export default function PaymentStatus({ status }: { status: string }) {
             <Divider />
 
             <PaymentDetails
-              paymentId={paymentId}
+              paymentId={status}
               email={email}
               date={dateFormatted}
               time={timeFormatted}
